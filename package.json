@@ -1,0 +1,51 @@
+{
+  "name": "hotel-booking-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hotel Booking Platform - Backend API (auth/RBAC, rooms, availability, reservations)",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:deploy": "prisma migrate deploy",
+    "seed": "ts-node prisma/seed.ts",
+    "pretest": "node -e \"try{require('fs').unlinkSync('prisma/test.db')}catch(e){}\" && cross-env DATABASE_URL=file:./test.db npx prisma migrate deploy",
+    "test": "cross-env DATABASE_URL=file:./test.db vitest run"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20.14.10",
+    "@types/supertest": "^7.2.1",
+    "cross-env": "^10.1.0",
+    "prisma": "^5.20.0",
+    "supertest": "^7.3.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.9"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "prisma@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "esbuild@0.21.5": true
+  }
+}

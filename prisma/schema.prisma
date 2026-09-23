@@ -1,0 +1,58 @@
+// Hotel Booking Platform - Database Schema (Milestone 1)
+// Provider: SQLite for zero-config local setup (see README for rationale).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite has no native enum type, so Role / ReservationStatus are plain
+// strings at the database level. The allowed values are enforced in the
+// application layer (see src/types/domain.ts and zod schemas).
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  role         String        @default("GUEST") // GUEST | STAFF | ADMIN
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+}
+
+model Room {
+  id            String        @id @default(cuid())
+  name          String
+  type          String
+  description   String?
+  capacity      Int
+  pricePerNight Float
+  imageUrl      String?
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  reservations  Reservation[]
+}
+
+// Reservation is modeled now (Milestone 1) because room search and the
+// availability calendar both need to know which dates are already taken.
+// The guest-facing booking flow that CREATES reservations ships in Milestone 2.
+model Reservation {
+  id        String            @id @default(cuid())
+  room      Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  checkIn   DateTime
+  checkOut  DateTime
+  guests    Int
+  status    String   @default("CONFIRMED") // CONFIRMED | CANCELLED
+  createdAt DateTime @default(now())
+
+  @@index([roomId, checkIn, checkOut])
+}
