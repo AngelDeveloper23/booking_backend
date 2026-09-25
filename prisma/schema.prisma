@@ -15,14 +15,18 @@ datasource db {
 // application layer (see src/types/domain.ts and zod schemas).
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  passwordHash String
-  name         String
-  role         String        @default("GUEST") // GUEST | STAFF | ADMIN
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  reservations Reservation[]
+  id                   String        @id @default(cuid())
+  email                String        @unique
+  passwordHash         String
+  name                 String
+  role                 String        @default("GUEST") // GUEST | STAFF | ADMIN
+  // Password reset: only a SHA-256 hash of the token is stored, mirroring
+  // how passwordHash never stores the raw password. See auth.controller.ts.
+  resetTokenHash       String?
+  resetTokenExpiresAt  DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  reservations         Reservation[]
 }
 
 model Room {
